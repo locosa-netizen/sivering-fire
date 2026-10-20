@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101318">
+<title>SHIVERING / FIRE — Fan Game</title>
+<style>
+:root{--bg:#0d1015;--panel:#171b23;--panel2:#202631;--line:#343d49;--text:#f4f2ed;--muted:#9aa4b2;--gold:#e7c27b;--hot:#ff6a45;--ice:#74cfff;--green:#9ce6bb;--danger:#ff5c72;--radius:18px}
+*{box-sizing:border-box} html{background:var(--bg)} body{margin:0;background:radial-gradient(ellipse at 50% -10%,#28303c 0, transparent 55%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;min-height:100vh;min-height:100dvh} button{font:inherit;cursor:pointer} button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.app{max-width:760px;margin:0 auto;padding:22px 14px calc(28px + env(safe-area-inset-bottom));}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.brand-mark{font-size:10px;letter-spacing:.22em;color:var(--gold);font-weight:800}.brand-note{font-size:10px;color:var(--muted);letter-spacing:.12em;text-align:right}
+.hero{position:relative;overflow:hidden;border:1px solid #3b424c;border-radius:25px;padding:25px 22px 22px;background:linear-gradient(135deg,rgba(255,106,69,.12),transparent 43%),linear-gradient(315deg,rgba(116,207,255,.12),transparent 48%),#151920;box-shadow:0 24px 60px #0005}
+.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--gold);font-weight:800}.hero h1{font-size:clamp(34px,8vw,56px);line-height:.98;letter-spacing:-.06em;margin:14px 0 12px;font-weight:950}.hero h1 .slash{color:#69727d}.hero h1 .fire{color:var(--hot)}.hero h1 .ice{color:var(--ice)}.lead{font-size:14px;line-height:1.8;color:#d5d9df;max-width:550px;margin:0 0 20px}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0}.mini{border:1px solid var(--line);background:#11151bcc;border-radius:13px;padding:12px 10px}.mini b{font-size:18px;display:block;margin-bottom:5px}.mini small{font-size:10px;color:var(--muted);line-height:1.5;display:block}.hot-text{color:var(--hot)}.ice-text{color:var(--ice)}
+.primary,.secondary{border:0;border-radius:13px;padding:14px 18px;font-weight:850;transition:transform .12s,filter .12s}.primary{width:100%;color:#1a1712;background:linear-gradient(100deg,#f0d497,#c99a4f);box-shadow:0 8px 22px #d5a45524}.primary:active,.secondary:active,.card:active{transform:scale(.985)}.secondary{background:#252d38;color:var(--text);border:1px solid #47515f}.small-note{font-size:10px;color:var(--muted);text-align:center;line-height:1.7;margin:13px 0 0}
+.rules{margin-top:14px;border:1px solid var(--line);background:#13171d;border-radius:15px;padding:15px 17px}.rules summary{font-weight:800;font-size:13px;cursor:pointer}.rules ol{padding-left:20px;color:#c2c9d2;font-size:12px;line-height:1.8;margin:12px 0 0}.rules p{color:var(--muted);font-size:11px;line-height:1.7;margin:10px 0 0}
+.game-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 2px 12px}.round-pill{border:1px solid #414955;border-radius:999px;padding:8px 11px;color:var(--gold);font-weight:850;font-size:11px;letter-spacing:.06em}.turn-copy{font-size:11px;color:var(--muted);text-align:right}.temperature-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.temp-panel{border:1px solid var(--line);border-radius:18px;padding:14px;background:linear-gradient(180deg,#1b2029,#14181f)}.temp-panel.enemy{background:linear-gradient(180deg,#211e25,#14181f)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-name{font-size:12px;font-weight:850;letter-spacing:.03em}.role{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}.temp-number{font-weight:900;font-size:31px;letter-spacing:-.05em;margin:14px 0 7px;font-variant-numeric:tabular-nums}.temp-number small{font-size:13px;color:var(--muted);letter-spacing:0}.temp-line{height:8px;border-radius:99px;background:linear-gradient(90deg,#63baf5 0%,#9ad9eb 26%,#9ba7ad 50%,#f6b26c 76%,#ff6755 100%);position:relative;overflow:visible;margin:13px 0 9px}.temp-dot{position:absolute;top:50%;height:16px;width:16px;border:3px solid white;border-radius:50%;background:#171b23;transform:translate(-50%,-50%);box-shadow:0 0 0 3px #090b0e88;transition:left .35s}.temp-caption{display:flex;justify-content:space-between;font-size:9px;color:var(--muted)}.stock{margin-top:13px;padding-top:11px;border-top:1px solid #343b46;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10px;color:var(--muted)}.stock strong{font-size:12px;color:var(--text);font-variant-numeric:tabular-nums}.deck-count{margin-top:8px;font-size:10px;color:var(--muted)}
+.status{margin:12px 0;border-radius:12px;border:1px solid #4a4f5a;background:#191e26;padding:11px 13px;font-size:12px;line-height:1.7;color:#e1e4e8}.status:empty{display:none}.status.alert{border-color:#8c6535;background:#2a2117;color:#f5dcae}.status.good{border-color:#386d55;background:#15261f;color:#b9f3d2}
+.duel-box{margin-top:13px;border:1px solid var(--line);border-radius:18px;padding:16px;background:#151a21}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.section-title h2{margin:0;font-size:14px}.section-title span{font-size:10px;color:var(--muted)}.hand{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{min-height:112px;border-radius:14px;border:1px solid #4b5665;background:linear-gradient(150deg,#29313c,#1b2028);color:var(--text);padding:12px 5px 11px;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:6px;position:relative;overflow:hidden;transition:transform .12s,border-color .15s,opacity .15s}.card.hot{border-color:#8d4a3a;background:linear-gradient(150deg,#392721,#201e23)}.card.ice{border-color:#3b708b;background:linear-gradient(150deg,#1c303b,#1b2028)}.card:disabled{opacity:.29;cursor:not-allowed;filter:grayscale(.3)}.card .kind{font-size:9px;letter-spacing:.16em;font-weight:950}.card.hot .kind{color:var(--hot)}.card.ice .kind{color:var(--ice)}.card .glyph{font-size:26px;line-height:1.1}.card .move{font-size:12px;font-weight:850}.card .effect{font-size:10px;color:#c3cbd4}.card.hot .effect{color:#ffb29c}.card.ice .effect{color:#a8e6ff}.hand-help{font-size:10px;color:var(--muted);margin:11px 2px 0;line-height:1.65}.result-card{margin-top:13px;padding:14px;border-radius:14px;border:1px solid #434d5b;background:#1b222c}.result-main{font-weight:900;font-size:16px;margin-bottom:10px}.play-reveal{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}.reveal-choice{background:#11151a;border:1px solid #343d49;border-radius:10px;padding:10px;text-align:center}.reveal-choice small{display:block;color:var(--muted);font-size:9px;margin-bottom:5px}.reveal-choice b{font-size:13px}.vs{font-size:10px;color:var(--gold);font-weight:900}.result-detail{font-size:11px;color:#c7ced7;line-height:1.7;margin:11px 0 0}.result-card .primary,.result-card .secondary{margin-top:12px}.round-score{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}.score-box{background:#141920;border:1px solid #333c48;border-radius:11px;padding:11px}.score-box span{display:block;font-size:10px;color:var(--muted)}.score-box b{font-size:18px;display:block;margin-top:4px;font-variant-numeric:tabular-nums}.log{margin-top:13px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#13171d}.log summary{padding:13px 15px;font-size:12px;font-weight:800;cursor:pointer}.log-list{padding:0 14px 12px;max-height:220px;overflow:auto}.log-line{display:grid;grid-template-columns:54px 1fr;gap:9px;padding:8px 0;border-top:1px solid #2b333e;font-size:10px;line-height:1.6;color:#c1c9d2}.log-line time{color:var(--gold);font-variant-numeric:tabular-nums}.result-screen{border:1px solid #4b525e;border-radius:22px;padding:23px;background:linear-gradient(135deg,#272b32,#151920);text-align:center;box-shadow:0 22px 50px #0004}.result-symbol{font-size:44px;margin:4px 0 10px}.result-screen h2{font-size:27px;margin:0 0 9px;letter-spacing:-.04em}.result-screen p{color:#c9d0d8;font-size:13px;line-height:1.8}.final-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0;text-align:left}.final-stat{border:1px solid #3c4552;border-radius:12px;padding:12px;background:#141920}.final-stat span{display:block;font-size:10px;color:var(--muted)}.final-stat b{display:block;font-size:20px;margin-top:4px}.footer{font-size:9px;line-height:1.7;text-align:center;color:#737e8c;margin:20px auto 0;max-width:600px}.hidden{display:none!important}.temperature-danger .temp-number{color:var(--danger)}
+@media(min-width:600px){.app{padding:28px 22px}.hero{padding:34px 34px 28px}.game-layout{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}.temperature-grid{gap:12px}.temp-panel{padding:16px}.duel-box{margin-top:0}.hand .card{min-height:122px}.game-top{margin-top:4px}}
+@media(max-width:380px){.app{padding-left:10px;padding-right:10px}.temp-panel{padding:11px}.temp-number{font-size:27px}.card{min-height:102px}.card .glyph{font-size:23px}.hero{padding:22px 17px}.mini{padding:10px 7px}.mini b{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="brand"><div><div class="brand-mark">DARK GAME LAB / FAN PROJECT</div></div><div class="brand-note">ONE HEAD<br>THERMAL DUEL</div></header>
+  <section id="intro-screen" class="hero">
+    <div class="eyebrow">A STRATEGY GAME OF HEAT & COLD</div>
+    <h1><span class="ice">SHIVERING</span><br><span class="slash">/</span> <span class="fire">FIRE</span></h1>
+    <p class="lead">6枚のカードを使い切るまで、相手と同時にじゃんけん。勝ったカードの効果は、自分の部屋の温度にストックされる。勝つだけじゃ生き残れない——温度と手札を読んで、最後まで立っていろ。</p>
+    <div class="mini-grid"><div class="mini"><b class="hot-text">HOT</b><small>チョキ +2℃<br>パー +5℃</small></div><div class="mini"><b class="ice-text">ICE</b><small>チョキ −2℃<br>パー −5℃</small></div><div class="mini"><b>6 × 4</b><small>6戦を1セット<br>4ラウンド突破を目指せ</small></div></div>
+    <button class="primary" id="start-btn">対戦を開始する　↗</button>
+    <p class="small-note">スマホ縦画面対応・1人用 / AI対戦<br>ファン制作の非公式ミニゲーム</p>
+    <details class="rules"><summary>ルールを確認する</summary><ol><li>各プレイヤーは HOT 3枚・ICE 3枚、合計6枚のカードを1回ずつ使う。</li><li>じゃんけんに勝った側だけ、自分が出したカードの温度効果をストックする。あいこは変化なし。</li><li>6戦後、どちらかが3勝以上ならラウンド成立。ストックした温度変化と双方 −10℃ を室温に反映する。</li><li>どちらも3勝に届かなければラウンド不成立。室温と −10℃ はまだ反映せず、温度ストックを持ち越して同じラウンドを再挑戦する。</li><li>4ラウンド成立後も両者が危険域でなければ、双方100℃の最終ペナルティ。累積温度ストックを使って簡易判定する。</li></ol><p>カード効果はグー±0℃・チョキ±2℃・パー±5℃。このミニゲームでは遊びやすさのため、危険域を −20℃以下 / 65℃以上に設定し、最終判定も簡略化しています。原作の進行・判定を完全に再現したものではありません。</p></details>
+  </section>
+
+  <section id="game-screen" class="hidden">
+    <div class="game-top"><div class="round-pill" id="round-label">ROUND 1</div><div class="turn-copy" id="turn-label">ATTEMPT 1 · DUEL 1 / 6</div></div>
+    <div class="temperature-grid">
+      <article class="temp-panel" id="player-panel"><div class="panel-head"><div class="panel-name">あなた</div><span class="role">PLAYER</span></div><div class="temp-number" id="player-temp">30<small> ℃</small></div><div class="temp-line"><i class="temp-dot" id="player-dot" style="left:46.15%"></i></div><div class="temp-caption"><span>−30℃</span><span>100℃</span></div><div class="stock"><span>精算待ちの温度変化</span><strong id="player-stock">±0℃</strong></div><div class="deck-count" id="player-left">残り札：6 / 6</div></article>
+      <article class="temp-panel enemy" id="enemy-panel"><div class="panel-head"><div class="panel-name">眞鍋 AI</div><span class="role">OPPONENT</span></div><div class="temp-number" id="enemy-temp">30<small> ℃</small></div><div class="temp-line"><i class="temp-dot" id="enemy-dot" style="left:46.15%"></i></div><div class="temp-caption"><span>−30℃</span><span>100℃</span></div><div class="stock"><span>精算待ちの温度変化</span><strong id="enemy-stock">±0℃</strong></div><div class="deck-count" id="enemy-left">残り札：6 / 6</div></article>
+    </div>
+    <div id="status-message" class="status" aria-live="polite"></div>
+    <div class="round-score"><div class="score-box"><span>このセットの勝利数 · YOU</span><b id="player-wins">0勝</b></div><div class="score-box"><span>このセットの勝利数 · AI</span><b id="enemy-wins">0勝</b></div></div>
+    <div class="game-layout" style="margin-top:12px">
+      <section class="duel-box"><div class="section-title"><h2 id="hand-title">出すカードを選べ</h2><span>使った札は戻らない</span></div><div class="hand" id="hand"></div><p class="hand-help" id="hand-help">カードを1枚タップ。相手も同時に1枚出す。カードの温度効果は勝ったときだけストックされる。</p></section>
+      <div>
+        <section id="result-box" class="result-card hidden" aria-live="polite"><div class="result-main" id="result-main"></div><div class="play-reveal"><div class="reveal-choice"><small>YOU</small><b id="reveal-player"></b></div><div class="vs">VS</div><div class="reveal-choice"><small>眞鍋 AI</small><b id="reveal-enemy"></b></div></div><p class="result-detail" id="result-detail"></p><button class="primary" id="next-btn">次の対戦へ →</button></section>
+        <details class="log" open><summary>対戦ログ <span id="log-count" style="color:var(--muted);font-weight:500"></span></summary><div class="log-list" id="log-list"><div style="font-size:11px;color:var(--muted);padding:10px 0">ここに対戦履歴が表示される。</div></div></details>
+      </div>
+    </div>
+    <button class="secondary" id="quit-btn" style="width:100%;margin-top:13px">最初からやり直す</button>
+  </section>
+  <section id="result-screen" class="result-screen hidden" aria-live="polite"><div class="result-symbol" id="final-symbol">♜</div><div class="eyebrow">GAME OVER</div><h2 id="final-title">勝負あり</h2><p id="final-copy"></p><div class="final-stats"><div class="final-stat"><span>あなたの最終室温</span><b id="final-player-temp">—</b></div><div class="final-stat"><span>眞鍋 AI の最終室温</span><b id="final-enemy-temp">—</b></div><div class="final-stat"><span>あなたの累積ストック</span><b id="final-player-stock">—</b></div><div class="final-stat"><span>眞鍋 AI の累積ストック</span><b id="final-enemy-stock">—</b></div></div><button class="primary" id="again-btn">もう一度対戦する ↻</button><p class="small-note">このゲームは原作をモチーフにした非公式ファン制作物です。</p></section>
+  <footer class="footer">非公式ファン制作ミニゲーム。原作の画像・コマ・ロゴ・本文は使用していません。ゲーム内の危険域や最終判定は、遊びやすさのために簡略化しています。</footer>
+</div>
+<script>
+(() => {
+'use strict';
+const $ = (id) => document.getElementById(id);
+const HANDS = {rock:{name:'グー',glyph:'✊'},scissors:{name:'チョキ',glyph:'✌'},paper:{name:'パー',glyph:'🖐️'}};
+const BEATS = {rock:'scissors',scissors:'paper',paper:'rock'};
+const TEMPLATE = [
+  {id:'hot-rock',kind:'HOT',hand:'rock',delta:0},
+  {id:'hot-scissors',kind:'HOT',hand:'scissors',delta:2},
+  {id:'hot-paper',kind:'HOT',hand:'paper',delta:5},
+  {id:'ice-rock',kind:'ICE',hand:'rock',delta:0},
+  {id:'ice-scissors',kind:'ICE',hand:'scissors',delta:-2},
+  {id:'ice-paper',kind:'ICE',hand:'paper',delta:-5}
+];
+let s;
+const copyDeck = () => TEMPLATE.map(c => ({...c}));
+const fmtTemp = n => `${n > 0 ? '+' : ''}${n}℃`;
+const fmtDelta = n => n === 0 ? '±0℃' : `${n > 0 ? '+' : '−'}${Math.abs(n)}℃`;
+const cardText = c => `${c.kind} ${HANDS[c.hand].name}`;
+const tempDeltaText = d => d===0 ? '温度変化なし' : `${d>0?'温度 +':'温度 −'}${Math.abs(d)}℃`;
+
+function newGame(){
+  s={phase:'play',playerTemp:30,enemyTemp:30,round:1,attempt:1,turn:1,playerDeck:copyDeck(),enemyDeck:copyDeck(),playerWins:0,enemyWins:0,playerStock:0,enemyStock:0,totalPlayerStock:0,totalEnemyStock:0,heatEventsPlayer:0,heatEventsEnemy:0,userHandCounts:{rock:0,scissors:0,paper:0},currentEnemyCard:null,lastResult:null,logs:[],notice:'ゲーム開始。カードを6枚使い切るまで、手札の順番を読め。',noticeType:'',finalTitle:'',finalCopy:'',finalSymbol:'♜'};
+  $('intro-screen').classList.add('hidden'); $('result-screen').classList.add('hidden'); $('game-screen').classList.remove('hidden');
+  prepareEnemyCard(); render();
+}
+function prepareEnemyCard(){
+  if(!s.enemyDeck.length){s.currentEnemyCard=null;return;}
+  const currentProjected=s.enemyTemp+s.enemyStock-10;
+  const recentMax=Math.max(...Object.values(s.userHandCounts));
+  const commonHands=Object.keys(s.userHandCounts).filter(k=>s.userHandCounts[k]===recentMax&&recentMax>0);
+  let best=null,bestScore=-Infinity;
+  for(const c of s.enemyDeck){
+    let score=Math.random()*1.25;
+    // The AI tries to keep its own room survivable, but can be baited into predictable choices.
+    if(currentProjected < 23) score += c.kind==='HOT'?2.1:-1.0;
+    else if(currentProjected > 39) score += c.kind==='ICE'?2.1:-1.0;
+    else score += -Math.abs((currentProjected+c.delta)-30)*0.035;
+    if(commonHands.length){
+      if(commonHands.some(h=>BEATS[c.hand]===h)) score += 0.6;
+      if(commonHands.some(h=>BEATS[h]===c.hand)) score -= 0.18;
+    }
+    if(score>bestScore){best=c;bestScore=score;}
+  }
+  s.currentEnemyCard=best;
+}
+function resultOf(p,e){if(p.hand===e.hand)return 0;if(BEATS[p.hand]===e.hand)return 1;return -1;}
+function chooseCard(id){
+  if(s.phase!=='play'||s.lastResult) return;
+  const idx=s.playerDeck.findIndex(c=>c.id===id);
+  if(idx<0||!s.currentEnemyCard)return;
+  const p=s.playerDeck.splice(idx,1)[0];
+  const e=s.currentEnemyCard;
+  s.enemyDeck=s.enemyDeck.filter(c=>c.id!==e.id);
+  s.currentEnemyCard=null;
+  s.userHandCounts[p.hand]++;
+  const outcome=resultOf(p,e);
+  let resultText,detail;
+  if(outcome===1){
+    s.playerWins++; s.playerStock+=p.delta; s.totalPlayerStock+=Math.abs(p.delta); if(p.delta!==0)s.heatEventsPlayer++;
+    resultText='あなたの勝ち'; detail=`あなたの ${cardText(p)} が勝利。カード効果 ${fmtDelta(p.delta)} を自分の室温にストックした。`;
+  }else if(outcome===-1){
+    s.enemyWins++; s.enemyStock+=e.delta; s.totalEnemyStock+=Math.abs(e.delta); if(e.delta!==0)s.heatEventsEnemy++;
+    resultText='眞鍋 AI の勝ち'; detail=`眞鍋 AI の ${cardText(e)} が勝利。カード効果 ${fmtDelta(e.delta)} を相手自身の室温にストックした。`;
+  }else{
+    resultText='あいこ'; detail='同じ手であいこ。今回はどちらの温度も変化しない。';
+  }
+  s.lastResult={p,e,outcome,resultText,detail};
+  s.logs.unshift({turn:`R${s.round}.${s.attempt} / ${s.turn}`,text:`${cardText(p)} vs ${cardText(e)} — ${resultText}${outcome===1?` · ${fmtDelta(p.delta)}`:outcome===-1?` · AI ${fmtDelta(e.delta)}`:''}`});
+  if(s.logs.length>30)s.logs.length=30;
+  s.notice='';s.noticeType='';
+  render();
+}
+function proceed(){
+  if(!s.lastResult)return;
+  if(s.turn<6){s.turn++;s.lastResult=null;prepareEnemyCard();render();}
+  else settleSet();
+}
+function settleSet(){
+  // The six-card set only settles when at least one side reaches three wins.
+  // Failed attempts preserve the accumulated temperature stock and do not apply -10℃ yet.
+  const passed = s.playerWins >= 3 || s.enemyWins >= 3;
+  if(!passed){
+    const pendingP=s.playerStock, pendingE=s.enemyStock;
+    const oldAttempt=s.attempt;
+    s.attempt++;
+    s.turn=1;
+    s.playerDeck=copyDeck();
+    s.enemyDeck=copyDeck();
+    s.playerWins=0;
+    s.enemyWins=0;
+    s.userHandCounts={rock:0,scissors:0,paper:0};
+    s.lastResult=null;
+    prepareEnemyCard();
+    const info=`3勝に届かなかったため第${s.round}ラウンドを再挑戦。今回の温度変化は未精算のまま持ち越し（あなた ${fmtDelta(pendingP)} / AI ${fmtDelta(pendingE)}）。室温と強制冷却 −10℃ はまだ反映されない。`;
+    s.logs.unshift({turn:`R${s.round}.${oldAttempt}`,text:'セット不成立 — 温度ストックを持ち越して再挑戦'});
+    if(s.logs.length>30)s.logs.length=30;
+    s.notice=info;
+    s.noticeType='alert';
+    render();
+    return;
+  }
+
+  const oldP=s.playerTemp, oldE=s.enemyTemp;
+  const stockP=s.playerStock, stockE=s.enemyStock;
+  s.playerTemp += stockP - 10;
+  s.enemyTemp += stockE - 10;
+  const detail=`ラウンド成立。あなた ${oldP}℃ → ${s.playerTemp}℃（ストック ${fmtDelta(stockP)}、強制冷却 −10℃）、眞鍋 AI ${oldE}℃ → ${s.enemyTemp}℃（ストック ${fmtDelta(stockE)}、強制冷却 −10℃）。`;
+  s.playerStock=0;
+  s.enemyStock=0;
+  s.logs.unshift({turn:`R${s.round}.${s.attempt}`,text:`ラウンド成立 — あなた ${fmtTemp(s.playerTemp)} / AI ${fmtTemp(s.enemyTemp)}（両者 −10℃）`});
+  if(s.logs.length>30)s.logs.length=30;
+
+  const pDead=isDanger(s.playerTemp), eDead=isDanger(s.enemyTemp);
+  if(pDead||eDead){
+    if(pDead&&eDead) endGame('DRAW','双方、危険域へ。','両者の室温が危険域に到達したため、ゲーム上は引き分け。'+detail,'☠️');
+    else if(eDead) endGame('WIN','勝負あり。あなたの勝利。','眞鍋 AI の室温が危険域に到達した。'+detail,'♜');
+    else endGame('LOSE','あなたの敗北。','あなたの室温が危険域に到達した。'+detail,'❄️');
+    return;
+  }
+
+  const completedRound=s.round;
+  if(completedRound>=4){
+    // Fan-game ending: after four successful rounds, both rooms are forced to 100℃.
+    s.playerTemp=100;
+    s.enemyTemp=100;
+    if(s.totalPlayerStock>s.totalEnemyStock) endGame('WIN','最後に立っていたのは、あなた。',`4ラウンド終了。双方の室温を100℃にする最終ペナルティ発動。累積温度ストックが多いあなたが最終判定を制した。${detail}`,'🔥');
+    else if(s.totalEnemyStock>s.totalPlayerStock) endGame('LOSE','眞鍋 AI の勝利。',`4ラウンド終了。双方の室温を100℃にする最終ペナルティ発動。累積温度ストックが少ないあなたが最終判定で敗れた。${detail}`,'♨️');
+    else endGame('DRAW','決着つかず。',`4ラウンド終了。双方100℃の最終ペナルティ後も、累積温度ストックが同数のため引き分け。${detail}`,'⚖️');
+    return;
+  }
+
+  s.round++;
+  s.attempt=1;
+  s.turn=1;
+  s.playerDeck=copyDeck();
+  s.enemyDeck=copyDeck();
+  s.playerWins=0;
+  s.enemyWins=0;
+  s.userHandCounts={rock:0,scissors:0,paper:0};
+  s.lastResult=null;
+  prepareEnemyCard();
+  s.notice=`第${completedRound}ラウンド成立！ ${detail} 次のラウンドへ。`;
+  s.noticeType='good';
+  render();
+}
+function isDanger(t){return t<=-20||t>=65;}
+function endGame(result,title,copy,symbol){
+  s.phase='over';s.finalTitle=title;s.finalCopy=copy;s.finalSymbol=symbol;
+  $('game-screen').classList.add('hidden');$('result-screen').classList.remove('hidden');
+  $('final-symbol').textContent=symbol;$('final-title').textContent=title;$('final-copy').textContent=copy;
+  $('final-player-temp').textContent=`${s.playerTemp}℃`;$('final-enemy-temp').textContent=`${s.enemyTemp}℃`;
+  $('final-player-stock').textContent=`${s.totalPlayerStock}℃分`;$('final-enemy-stock').textContent=`${s.totalEnemyStock}℃分`;
+}
+function renderTemp(side,temp,stock){
+  $(`${side}-temp`).innerHTML=`${temp}<small> ℃</small>`;
+  const pct=Math.max(0,Math.min(100,(temp+30)/130*100));
+  $(`${side}-dot`).style.left=`${pct}%`;
+  $(`${side}-stock`).textContent=fmtDelta(stock);
+  const panel=$(`${side}-panel`);panel.classList.toggle('temperature-danger',isDanger(temp));
+}
+function render(){
+  if(s.phase!=='play')return;
+  $('round-label').textContent=`ROUND ${Math.min(s.round,4)} / 4`;
+  $('turn-label').textContent=`ATTEMPT ${s.attempt} · DUEL ${s.turn} / 6`;
+  renderTemp('player',s.playerTemp,s.playerStock);renderTemp('enemy',s.enemyTemp,s.enemyStock);
+  $('player-left').textContent=`残り札：${s.playerDeck.length} / 6`;$('enemy-left').textContent=`残り札：${s.enemyDeck.length} / 6`;
+  $('player-wins').textContent=`${s.playerWins}勝`;$('enemy-wins').textContent=`${s.enemyWins}勝`;
+  const notice=$('status-message');notice.textContent=s.notice;notice.className='status'+(s.noticeType?' '+s.noticeType:'');
+  $('hand-title').textContent=s.lastResult?'対戦結果':`カードを選べ · ${s.playerDeck.length}枚残り`;
+  $('hand-help').textContent=s.lastResult?'結果を確認したら、次の対戦へ進もう。':'カードを1枚タップ。相手も同時に1枚出す。温度効果は勝った側にだけ発生する。';
+  $('hand').innerHTML='';
+  const canPick=!s.lastResult&&s.turn<=6;
+  for(const c of TEMPLATE){
+    const remaining=s.playerDeck.some(x=>x.id===c.id);
+    const b=document.createElement('button');b.className=`card ${c.kind.toLowerCase()}`;b.disabled=!canPick||!remaining;
+    const delta=c.delta===0?'±0℃':`${c.delta>0?'+':'−'}${Math.abs(c.delta)}℃`;
+    b.innerHTML=`<span class="kind">${c.kind}</span><span class="glyph">${HANDS[c.hand].glyph}</span><span class="move">${HANDS[c.hand].name}</span><span class="effect">${delta}</span>`;
+    if(remaining)b.addEventListener('click',()=>chooseCard(c.id));
+    $('hand').appendChild(b);
+  }
+  const rb=$('result-box');
+  if(s.lastResult){
+    rb.classList.remove('hidden');$('result-main').textContent=s.lastResult.resultText;
+    $('reveal-player').textContent=cardText(s.lastResult.p);$('reveal-enemy').textContent=cardText(s.lastResult.e);
+    $('result-detail').textContent=s.lastResult.detail;
+    $('next-btn').textContent=s.turn<6?'次の対戦へ →':'6戦の温度を精算する →';
+  }else rb.classList.add('hidden');
+  $('log-count').textContent=`(${s.logs.length})`;
+  $('log-list').innerHTML=s.logs.length?s.logs.map(l=>`<div class="log-line"><time>${escapeHtml(l.turn)}</time><div>${escapeHtml(l.text)}</div></div>`).join(''):'<div style="font-size:11px;color:var(--muted);padding:10px 0">ここに対戦履歴が表示される。</div>';
+}
+function escapeHtml(x){return String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');}
+$('start-btn').addEventListener('click',newGame);
+$('next-btn').addEventListener('click',proceed);
+$('again-btn').addEventListener('click',()=>{$('result-screen').classList.add('hidden');$('intro-screen').classList.remove('hidden');});
+$('quit-btn').addEventListener('click',()=>{if(confirm('今の対戦を終了して最初からやり直しますか？')){ $('game-screen').classList.add('hidden');$('result-screen').classList.add('hidden');$('intro-screen').classList.remove('hidden'); }});
+})();
+</script>
+</body>
+</html>
